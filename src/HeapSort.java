@@ -1,70 +1,73 @@
+// Nome do arquivo: HeapSort.java
+
 public class HeapSort {
-	private int comparisons = 0;
 
-    public int getComparisons() { return comparisons; }
-    // Função principal do Heap Sort
-    public static void heapSort(int[] A) {
-        int n = A.length;
+    // Variáveis estáticas para contar
+    private static long comparacoes;
+    private static long trocas;
 
-        // 1️⃣ Construir o heap máximo
+    // 1. Método público principal
+    public static SortStats sort(int[] v) {
+        // Reseta os contadores
+        comparacoes = 0;
+        trocas = 0;
+        int n = v.length;
+
+        // Mede o tempo
+        long t1 = System.nanoTime();
+        
+        // 1. Constrói o heap (rearranja o vetor)
         for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(A, n, i);
+            heapify(v, n, i);
         }
 
-        // 2️⃣ Extrair elementos do heap um por um
+        // 2. Extrai um por um os elementos do heap
         for (int i = n - 1; i > 0; i--) {
-            // Move o maior (raiz) para o final
-            int temp = A[0];
-            A[0] = A[i];
-            A[i] = temp;
-
-            // Reorganiza o heap reduzido
-            heapify(A, i, 0);
+            // Move a raiz atual (maior) para o fim
+            swap(v, 0, i); // Chama nosso método de troca
+            heapify(v, i, 0);
         }
+        long tempoTotal = System.nanoTime() - t1;
+
+        // Retorna o objeto de estatísticas
+        return new SortStats(comparacoes, trocas, tempoTotal);
     }
 
-    // Função que mantém a propriedade de heap máximo
-    public static void heapify(int[] A, int heapSize, int i) {
-        int largest = i;       // Inicialmente, assume que o pai é o maior
-        int left = 2 * i + 1;  // Filho à esquerda
-        int right = 2 * i + 2; // Filho à direita
+    // 2. Método 'heapify' (onde a maior parte da contagem ocorre)
+    private static void heapify(int[] v, int n, int i) {
+        int largest = i;     // Inicializa o maior como raiz
+        int l = 2 * i + 1; // filho da esquerda
+        int r = 2 * i + 2; // filho da direita
 
-        // Verifica se o filho da esquerda é maior que o pai
-        if (left < heapSize && A[left] > A[largest])
-            largest = left;
+        // Se o filho da esquerda é maior que a raiz
+        // INCREMENTA A COMPARAÇÃO AQUI
+        comparacoes++;
+        if (l < n && v[l] > v[largest]) {
+            largest = l;
+        }
 
-        // Verifica se o filho da direita é maior que o maior atual
-        if (right < heapSize && A[right] > A[largest])
-            largest = right;
+        // Se o filho da direita é maior que o 'largest' atual
+        // INCREMENTA A COMPARAÇÃO AQUI
+        comparacoes++;
+        if (r < n && v[r] > v[largest]) {
+            largest = r;
+        }
 
-        // Se o maior não for o pai, troca e chama heapify recursivamente
+        // Se o 'largest' não é mais a raiz
         if (largest != i) {
-            int swap = A[i];
-            A[i] = A[largest];
-            A[largest] = swap;
+            swap(v, i, largest); // Chama nosso método de troca
 
-            heapify(A, heapSize, largest);
+            // Recursivamente chama 'heapify' para a sub-árvore afetada
+            heapify(v, n, largest);
         }
     }
 
-    // Função para imprimir o array
-    public static void printArray(int[] A) {
-        for (int num : A) {
-            System.out.print(num + " ");
-        }
-        System.out.println();
-    }
-
-    // Testando o Heap Sort
-    public static void main(String[] args) {
-        int[] array = {4, 10, 3, 5, 1};
-
-        System.out.println("Array original:");
-        printArray(array);
-
-        heapSort(array);
-
-        System.out.println("Array ordenado:");
-        printArray(array);
+    // 3. Método de troca (swap)
+    private static void swap(int[] v, int i, int j) {
+        // INCREMENTA A TROCA AQUI
+        trocas++;
+        int temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
     }
 }
